@@ -17,7 +17,6 @@ app.use(cors());
 
 app.use("/notes", noteRoutes);
 app.use("/user", userRoutes);
-
 app.get("/", (req, res) => {
   res.send("Welcome");
 });
@@ -25,7 +24,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 mongoose
-  .connect(process.env.CONNECTION_URL, {
+  .connect(CONNECTION_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
