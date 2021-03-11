@@ -1,18 +1,19 @@
-import PostMessage from "../models/postMessage.js";
+import Note from "../models/note.js";
 import mongoose from "mongoose";
 
-export const getPosts = async (req, res) => {
+export const getNotes = async (req, res) => {
   try {
-    const postMessages = await PostMessage.find();
+    const postMessages = await Note.find({ user: req.userId });
     res.status(200).json(postMessages);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
 
-export const createPost = async (req, res) => {
-  const note = req.body.newNote;
-  const newPost = new PostMessage(note);
+export const createNote = async (req, res) => {
+  const note = req.body;
+  req.body.user = req.userId;
+  const newPost = new Note(note);
 
   try {
     await newPost.save();
@@ -22,24 +23,24 @@ export const createPost = async (req, res) => {
   }
 };
 
-export const updatePost = async (req, res) => {
+export const updateNote = async (req, res) => {
   const _id = req.params.id;
-  const note = req.body.updatedPost;
+  const note = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(_id))
     return res.status(404).send("No post with that id");
 
-  const updatedPost = await PostMessage.findByIdAndUpdate(_id, note, {
+  const updatedPost = await Note.findByIdAndUpdate(_id, note, {
     new: true,
   });
   res.json(updatedPost);
 };
 
-export const deletePost = async (req, res) => {
+export const deleteNote = async (req, res) => {
   const id = req.params.id;
   try {
-    const deleted = await PostMessage.findByIdAndDelete(id);
-    res.status(200).json(`${id} has been deleted`);
+    const deleted = await Note.findByIdAndDelete(id);
+    res.status(200).json(id);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
